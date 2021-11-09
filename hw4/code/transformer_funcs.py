@@ -24,6 +24,10 @@ def Attention_Matrix(K, Q, use_mask=False):
 
 	# TODO:
 	# 1) compute attention weights using queries and key matrices (if use_mask==True, then make sure to add the attention mask before softmax)
+	score = tf.matmul(Q,K,transpose_a = False,transpose_b=True)
+	logit = tf.nn.softmax(score/np.sqrt(window_size_keys))
+	if use_mask:
+		logit = logit + atten_mask
 	# 2) return the attention matrix
 
 
@@ -39,7 +43,7 @@ def Attention_Matrix(K, Q, use_mask=False):
 	# Those weights are then used to create linear combinations of the corresponding values for each query.
 	# Those queries will become the new embeddings.
 
-	return None
+	return logit
 
 
 class Atten_Head(tf.keras.layers.Layer):
@@ -52,7 +56,11 @@ class Atten_Head(tf.keras.layers.Layer):
 		# Initialize the weight matrices for K, V, and Q.
 		# They should be able to multiply an input_size vector to produce an output_size vector 
 		# Hint: use self.add_weight(...)
-		
+		self.k = self.add_weight(shape=(input_size, output_size),initializer='random_normal',trainable=True)
+		self.v = self.add_weight(shape=(input_size, output_size),initializer='random_normal',trainable=True)
+		self.q = self.add_weight(shape=(input_size, output_size),initializer='random_normal',trainable=True)
+
+
 	@tf.function
 	def call(self, inputs_for_keys, inputs_for_values, inputs_for_queries):
 
@@ -72,11 +80,11 @@ class Atten_Head(tf.keras.layers.Layer):
 		# - Call Attention_Matrix with the keys and queries, and with self.use_mask.
 		# - Apply the attention matrix to the values
 
-		K = None
-		V = None
-		Q = None
-
-		return None
+		K = tf.matmul(inputs_for_keys,self.k)
+		V = tf.matmul(inputs_for_values,self.v)
+		Q = tf.matmul(inputs_for_queries,self.q)
+		attention = Attention_Matrix(K,Q,self.use_mask) #(q,k)
+		return tf.matmul(attention,V)
 
 
 
