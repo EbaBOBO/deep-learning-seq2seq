@@ -111,18 +111,24 @@ def get_data(french_training_file, english_training_file, french_test_file, engl
 	#TODO:
 	
 	#1) Read English and French Data for training and testing (see read_data)
-
+	train_english = read_data(english_training_file)
+	test_english = read_data(english_test_file)
+	train_french = read_data(french_training_file)
+	test_french = read_data(french_test_file)
 	#2) Pad training data (see pad_corpus)
-
+	train_french, train_english  = pad_corpus(train_french,train_english)
 	#3) Pad testing data (see pad_corpus)
-
+	test_french, test_english  = pad_corpus(test_french,test_english)
 	#4) Build vocab for french (see build_vocab)
-
+	french_vocab,fre_padding_index = build_vocab(train_french)
 	#5) Build vocab for english (see build_vocab)
-
+	english_vocab,eng_padding_index= build_vocab(train_english)
 	#6) Convert training and testing english sentences to list of IDS (see convert_to_id)
-
+	train_english = convert_to_id(english_vocab,train_english)
+	test_english = convert_to_id(english_vocab,test_english)
 	#7) Convert training and testing french sentences to list of IDS (see convert_to_id)
+	train_french = convert_to_id(french_vocab,train_french)
+	test_french = convert_to_id(french_vocab,test_french)
+	return train_english, test_english, train_french, test_french, english_vocab, french_vocab, eng_padding_index
 
-	return None
-	
+# get_data('/Users/zccc/1470projects/data/fls.txt','/Users/zccc/1470projects/data/els.txt','/Users/zccc/1470projects/data/flt.txt','/Users/zccc/1470projects/data/elt.txt')
