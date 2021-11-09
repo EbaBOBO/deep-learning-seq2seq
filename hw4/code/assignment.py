@@ -64,19 +64,21 @@ def test(model, test_french, test_english, eng_padding_index):
 	sumacc = 0
 	total=0
 	for i in range(int(len(test_french)/model.batch_size)):
-		with tf.GradientTape() as tape:
-			test_french1 = test_french[i*model.batch_size:(i+1)*model.batch_size]
-			test_english1 = test_english[i*model.batch_size:(i+1)*model.batch_size,:-1]
-			probs=model.call(test_french1,test_english1)
-            # print(probs.shape)
-			label = test_english[i*model.batch_size:(i+1)*model.batch_size,1:]
-			losses=model.loss_function(probs,label, label != eng_padding_index)
-			sumper += losses
-			acc = model.accuracy_function(probs,label, label != eng_padding_index)
-			sumacc += np.sum(label != eng_padding_index)*acc
-			total += np.sum(label != eng_padding_index)
+		# with tf.GradientTape() as tape:
+		test_french1 = test_french[i*model.batch_size:(i+1)*model.batch_size]
+		test_english1 = test_english[i*model.batch_size:(i+1)*model.batch_size,:-1]
+		probs=model.call(test_french1,test_english1)
+		# print(probs.shape)
+		label = test_english[i*model.batch_size:(i+1)*model.batch_size,1:]
+		losses=model.loss_function(probs,label, label != eng_padding_index)
+		sumper += losses
+		acc = model.accuracy_function(probs,label, label != eng_padding_index)
+		sumacc += np.sum(label != eng_padding_index)*acc
+		total += np.sum(label != eng_padding_index)
 	perplexity = np.exp(sumper/total)
 	accuracy = sumacc/total
+	print('perplexity is:',perplexity)
+	print('acc is:',accuracy)
 	return perplexity,accuracy
 	pass
 

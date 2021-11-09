@@ -25,9 +25,11 @@ def Attention_Matrix(K, Q, use_mask=False):
 	# TODO:
 	# 1) compute attention weights using queries and key matrices (if use_mask==True, then make sure to add the attention mask before softmax)
 	score = tf.matmul(Q,K,transpose_a = False,transpose_b=True)
-	logit = tf.nn.softmax(score/np.sqrt(window_size_keys))
+	attention = score/np.sqrt(window_size_keys)
 	if use_mask:
-		logit = logit + atten_mask
+		attention = attention + atten_mask
+	logit = tf.nn.softmax(attention,axis = -1)
+
 	# 2) return the attention matrix
 
 
