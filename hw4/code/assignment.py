@@ -32,7 +32,7 @@ def train(model, train_french, train_english, eng_padding_index):
 	#	 [STOP CS147 is the best class. STOP] --> [CS147 is the best class. STOP] 
 
 
-	optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+	# optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
 	for i in range(int(len(train_french)/model.batch_size)):
 		with tf.GradientTape() as tape:
 			train_french1 = train_french[i*model.batch_size:(i+1)*model.batch_size]
