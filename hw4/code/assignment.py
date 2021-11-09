@@ -60,23 +60,9 @@ def test(model, test_french, test_english, eng_padding_index):
 	"""
 
 	# Note: Follow the same procedure as in train() to construct batches of data!
-
-    # for i in range(int(len(test_inputs1)/model.batch_size)):
-    #     # print(i)
-    #     with tf.GradientTape() as tape:
-    #         logits,final_memory_state = model.call(test_inputs1[i*model.batch_size:(i+1)*model.batch_size],None)
-    #         # print('logits ',logits) #(100,20,4962)
-    #         losses=model.loss(logits,test_labels1[i*model.batch_size:(i+1)*model.batch_size])
-    #         # print('losses:',losses)
-    #         sum += losses
-        
-    # perplexity = np.exp(sum/int(len(test_inputs1)/model.batch_size))
-    # # print('perplexity is:',perplexity)
-
-    # return perplexity
 	sumper = 0
 	sumacc = 0
-	
+	total=0
 	for i in range(int(len(test_french)/model.batch_size)):
 		with tf.GradientTape() as tape:
 			test_french1 = test_french[i*model.batch_size:(i+1)*model.batch_size]
@@ -88,10 +74,9 @@ def test(model, test_french, test_english, eng_padding_index):
 			sumper += losses
 			acc = model.accuracy_function(probs,label, label != eng_padding_index)
 			sumacc += np.sum(label != eng_padding_index)*acc
-	perplexity = np.exp(sumper/int(len(test_french)/model.batch_size))
-	accuracy = sumacc/int(len(test_french)/model.batch_size)
-		# gradients = tape.gradient(losses, model.trainable_variables)
-        # print(gradients)
+			total += np.sum(label != eng_padding_index)
+	perplexity = np.exp(sumper/total)
+	accuracy = sumacc/total
 	return perplexity,accuracy
 	pass
 
